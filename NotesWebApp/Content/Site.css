@@ -18,3 +18,17 @@ select,
 textarea {
     max-width: 280px;
 }
+
+
+.highlight {
+    background-color: yellow;
+    font-weight: bold;
+}
+
+.color-option:hover {
+    border: 2px solid black;
+}
+
+.selected-color {
+    border: 2px solid black !important;
+}

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <title>Notes App</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 
@@ -11,28 +11,104 @@
 <body>
     <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
         <div class="container">
-            @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            @Html.ActionLink("Notes App", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
             <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
                 <ul class="navbar-nav flex-grow-1">
-                    <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("About", "About", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+                    @if (Request.IsAuthenticated)
+                    {
+                        <li>@Html.ActionLink("My Notes", "Index", "Notes", new { area = "" }, new { @class = "nav-link" })</li>
+                        <li>@Html.ActionLink("Archived Notes", "Archived", "Notes", new { area = "" }, new { @class = "nav-link" })</li>
+                    }
                 </ul>
-                 @Html.Partial("_LoginPartial")
+                @Html.Partial("_LoginPartial")
             </div>
         </div>
     </nav>
     <div class="container body-content">
         @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
-        </footer>
     </div>
+
+    <script>
+        function toggleArchive(noteId, button) {
+        fetch("/Notes/ToggleArchive/" + noteId, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" }
+        })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = "/Notes/Index";
+                } else {
+                    alert("Error: Unable to archive note.");
+                }
+            });
+    }
+
+    function deleteNote(noteId, button) {
+        fetch("/Notes/Delete/" + noteId, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" }
+        })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = "/Notes/Index";
+                } else {
+                    alert("Error: Unable to archive note.");
+                }
+            });
+    }
+
+
+    function searchNotes() {
+        var input = document.getElementById("searchInput").value.toUpperCase();
+        var notes = document.querySelectorAll(".note-card");
+
+        notes.forEach(note => {
+            var titleElement = note.querySelector(".card-title .highlightable");
+            var contentElement = note.querySelector(".card-text.highlightable");
+            var title = note.getAttribute("data-title");
+            var content = note.getAttribute("data-content");
+
+            if (title.toUpperCase().includes(input) || content.toUpperCase().includes(input)) {
+                note.style.display = "";
+                highlightText(titleElement, title, input);
+                highlightText(contentElement, content, input);
+            } else {
+                note.style.display = "none";
+            }
+        });
+
+
+    }
+
+    function highlightText(element, text, search) {
+        if (!search) {
+            element.innerHTML = text;
+            return;
+        }
+
+        var regex = new RegExp(`(${search})`, "gi");
+        element.innerHTML = text.replace(regex, "<span class='highlight'>$1</span>");
+    }
+
+    function sortNotes(order) {
+        var container = document.getElementById("notesContainer");
+        var notes = Array.from(container.getElementsByClassName("note-card"));
+
+        notes.sort((a, b) => {
+            var dateA = new Date(a.getAttribute("data-created"));
+            var dateB = new Date(b.getAttribute("data-created"));
+            return order === 'oldest' ? dateA - dateB : dateB - dateA;
+        });
+
+        container.innerHTML = "";
+        notes.forEach(note => container.appendChild(note));
+    }</script>
+
+
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")

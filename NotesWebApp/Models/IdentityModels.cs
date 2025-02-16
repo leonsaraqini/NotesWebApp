@@ -25,6 +25,8 @@ namespace NotesWebApp.Models
         {
         }
 
+        public DbSet<Note> Notes { get; set; }
+
         public static ApplicationDbContext Create()
         {
             return new ApplicationDbContext();

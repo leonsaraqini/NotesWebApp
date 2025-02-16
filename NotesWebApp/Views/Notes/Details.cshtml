@@ -1,0 +1,20 @@
+﻿@model NotesWebApp.Models.Note
+
+@{
+    ViewBag.Title = "Note Details";
+}
+
+<h2>Note Details</h2>
+
+<div class="card mt-3" style="background-color: @Model.Color; padding: 20px; border-radius: 8px;">
+    <h3 class="card-title">@Model.Title</h3>
+    <p class="card-text">@Model.Content</p>
+    <p><strong>Created At:</strong> @Model.CreatedAt.ToString("yyyy-MM-dd HH:mm")</p>
+</div>
+
+<div class="mt-3">
+    <a href="@Url.Action("Edit", new { id = Model.Id })" class="btn btn-warning">Edit Note</a>
+    <a href="@Url.Action("Index")" class="btn btn-secondary">Back to Notes</a>
+</div>
+
+

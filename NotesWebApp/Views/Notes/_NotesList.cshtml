@@ -1,0 +1,45 @@
+﻿<div class="d-flex justify-content-between align-items-center mb-3">
+    <a href="@Url.Action("Create")" class="btn btn-primary">Add Note</a>
+    <div class="d-flex gap-2">
+        <input type="text" id="searchInput" placeholder="Search notes..." class="form-control" onkeyup="searchNotes()">
+        <button class="btn btn-secondary" onclick="sortNotes('newest')">Newest</button>
+        <button class="btn btn-secondary" onclick="sortNotes('oldest')">Oldest</button>
+    </div>
+</div>
+
+<div class="container mt-4">
+    <div class="row g-3" id="notesContainer">
+        @foreach (var m in Model)
+        {
+            <div class="col-md-4 note-card" data-title="@m.Title" data-content="@m.Content" data-created="@m.CreatedAt">
+                <div class="card" style="width: 100%; background-color:@m.Color">
+                    <div class="card-body">
+                        <h2 class="card-title">
+                            <a href="@Url.Action("Details", new { id = m.Id })" class="text-decoration-none text-dark">
+                                <span class="highlightable">@m.Title</span>
+                            </a>
+                        </h2>
+                        <p class="card-text highlightable">@m.Content</p>
+
+
+                        @if (!m.IsArchived)
+                        {
+                            <button class="btn btn-danger" onclick="deleteNote(@m.Id, this)">
+
+                                Delete
+                            </button>
+                        }
+
+                        <button class="btn btn-warning archive-btn" onclick="toggleArchive(@m.Id, this)">
+                            @(m.IsArchived ? "Unarchive" : "Archive")
+                        </button>
+                    </div>
+                    <div class="card-footer">
+                        <small class="text-dark">Created in: @m.CreatedAt</small>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+

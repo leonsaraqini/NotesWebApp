@@ -23,8 +23,10 @@
         <div class="d-flex gap-2">
             @foreach (var color in new[] { "#ff5733", "#33ff57", "#3357ff", "#f3ff33", "#ff33a8" })
             {
-                <label class="color-option" style="background-color:@color; width:30px; height:30px; display:inline-block; cursor:pointer; border-radius:5px; border: 2px solid transparent;" onclick="selectColor(this)">
-                    <input type="radio" name="Color" value="@color" style="display:none;" />
+                <label class="color-option @(Model.Color == color ? "selected-color" : "")"
+                       style="background-color:@color; width:30px; height:30px; display:inline-block; cursor:pointer; border-radius:5px; border: 2px solid transparent;"
+                       onclick="selectColor(this)">
+                    <input type="radio" name="Color" value="@color" style="display:none;" @(Model.Color == color ? "checked" : "") />
                 </label>
             }
         </div>
@@ -34,9 +36,12 @@
 }
 
 
-<script>function selectColor(element) {
+<script>
+
+    function selectColor(element) {
         document.querySelectorAll('.color-option').forEach(el => el.classList.remove('selected-color'));
         element.classList.add('selected-color');
         element.querySelector('input').checked = true;
-    }</script>
+    }
+</script>
 

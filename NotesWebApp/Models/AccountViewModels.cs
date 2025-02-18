@@ -49,8 +49,7 @@ namespace NotesWebApp.Models
     public class LoginViewModel
     {
         [Required]
-        [Display(Name = "Email")]
-        [EmailAddress]
+        [Display(Name = "Username/Email")]
         public string Email { get; set; }
 
         [Required]
@@ -64,6 +63,11 @@ namespace NotesWebApp.Models
 
     public class RegisterViewModel
     {
+        [Required]
+        [Display(Name = "Username")]
+        public string Username { get; set; }
+
+
         [Required]
         [EmailAddress]
         [Display(Name = "Email")]

@@ -168,6 +168,15 @@ namespace NotesWebApp.Controllers
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    /*string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                    string confirmationLink = Url.Action("ConfirmEmail", "Account",
+                                            new { userId = user.Id, token = code }, protocol: Request.Url.Scheme);
+
+                    // Send Confirmation Email
+                    await UserManager.SendEmailAsync(user.Id, "Confirm Your Account",
+                        $"Please confirm your account by clicking <a href='{confirmationLink}'>here</a>.");
+
+                    return View("ConfirmRegistrationMessage");*/
                     await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
 
                     return RedirectToAction("Index", "Notes");
@@ -179,9 +188,26 @@ namespace NotesWebApp.Controllers
             return View(model);
         }
 
+        [AllowAnonymous]
+        public async Task<ActionResult> ConfirmEmail(string userId, string token)
+        {
+            if (userId == null || token == null)
+            {
+                return View("Error");
+            }
+
+            var result = await UserManager.ConfirmEmailAsync(userId, token);
+            if (result.Succeeded)
+            {
+                return View("ConfirmEmailSuccess");
+            }
+
+            return View("Error");
+        }
+
         //
         // GET: /Account/ConfirmEmail
-        [AllowAnonymous]
+        /*[AllowAnonymous]
         public async Task<ActionResult> ConfirmEmail(string userId, string code)
         {
             if (userId == null || code == null)
@@ -190,7 +216,7 @@ namespace NotesWebApp.Controllers
             }
             var result = await UserManager.ConfirmEmailAsync(userId, code);
             return View(result.Succeeded ? "ConfirmEmail" : "Error");
-        }
+        }*/
 
         //
         // GET: /Account/ForgotPassword

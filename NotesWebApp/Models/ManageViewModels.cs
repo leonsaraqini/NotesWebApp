@@ -58,6 +58,13 @@ namespace NotesWebApp.Models
         public string ConfirmPassword { get; set; }
     }
 
+    public class EditProfileViewModel
+    {
+        [Required]
+        [Display(Name = "Username")]
+        public string Username { get; set; }
+    }
+
     public class AddPhoneNumberViewModel
     {
         [Required]

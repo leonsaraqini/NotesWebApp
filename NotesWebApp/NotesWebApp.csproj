@@ -271,6 +271,7 @@
     <Content Include="Views\Notes\_NotesList.cshtml" />
     <Content Include="Views\Account\ConfirmRegistrationMessage.cshtml" />
     <Content Include="Views\Account\ConfirmEmailSuccess.cshtml" />
+    <Content Include="Views\Manage\EditProfile.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

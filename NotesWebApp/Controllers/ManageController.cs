@@ -232,6 +232,7 @@ namespace NotesWebApp.Controllers
             }
 
             var result = await UserManager.ChangePasswordAsync(User.Identity.GetUserId(), model.OldPassword, model.NewPassword);
+            
             if (result.Succeeded)
             {
                 var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
@@ -242,6 +243,56 @@ namespace NotesWebApp.Controllers
                 return RedirectToAction("Index", new { Message = ManageMessageId.ChangePasswordSuccess });
             }
 
+            return View(model);
+        }
+
+
+        public ActionResult EditProfile()
+        {
+            var userId = User.Identity.GetUserId();
+            var user = UserManager.FindById(userId);
+            if (user == null) return HttpNotFound();
+
+            var model = new EditProfileViewModel
+            {
+                Username = user.UserName
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> EditProfile(EditProfileViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var userId = User.Identity.GetUserId();
+            var user = await UserManager.FindByIdAsync(userId);
+
+            if (user == null) return HttpNotFound();
+
+            // Check if username is already taken
+            var existingUser = await UserManager.FindByNameAsync(model.Username);
+            if (existingUser != null && existingUser.Id != userId)
+            {
+                ModelState.AddModelError("Username", "This username is already taken.");
+                return View(model);
+            }
+
+            user.UserName = model.Username;
+            var result = await UserManager.UpdateAsync(user);
+
+            if (result.Succeeded)
+            {
+                // Re-sign in the user after username change
+                await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                return RedirectToAction("Index", "Notes");
+            }
+
+            ModelState.AddModelError("", "Failed to update username.");
             return View(model);
         }
 

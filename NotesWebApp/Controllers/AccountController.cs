@@ -99,6 +99,7 @@ namespace NotesWebApp.Controllers
             return View(model);
         }
 
+
         //
         // GET: /Account/VerifyCode
         [AllowAnonymous]
